@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"context"
 	"io"
 	"strconv"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/shivang/antigravity/backend/internal/ai"
@@ -14,11 +12,11 @@ import (
 )
 
 type IngestHandler struct {
-	AI *ai.AIClient
+	AI *ai.BrainClient
 }
 
-func NewIngestHandler(aiClient *ai.AIClient) *IngestHandler {
-	return &IngestHandler{AI: aiClient}
+func NewIngestHandler(brainClient *ai.BrainClient) *IngestHandler {
+	return &IngestHandler{AI: brainClient}
 }
 
 func (h *IngestHandler) IngestPYQ(c *fiber.Ctx) error {
@@ -68,32 +66,31 @@ func (h *IngestHandler) IngestPYQ(c *fiber.Ctx) error {
 		embedText = text[:2000]
 	}
 
-	// 4. Generate Embedding
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	embedding, err := h.AI.GenerateEmbedding(ctx, embedText)
+	// 4. Generate Embedding via Brain
+	embedding, err := h.AI.GetEmbedding(embedText)
 	if err != nil {
 		return c.Status(500).SendString("AI Embedding failed: " + err.Error())
 	}
 
 	// 5. Save to DB
-	pyq := models.PYQ{
+	resource := models.Resource{
+		Category:   "pyq",
 		Subject:    subject,
 		Year:       year,
-		Question:   text, // Store full text
+		Title:      "Question Source - " + strconv.Itoa(year),
+		Content:    text, // Store full text
 		Topic:      topic,
 		Difficulty: "Medium", // Placeholder
 		Embedding:  embedding,
 	}
 
-	if err := database.DB.Create(&pyq).Error; err != nil {
+	if err := database.DB.Create(&resource).Error; err != nil {
 		return c.Status(500).SendString("Database save failed: " + err.Error())
 	}
 
 	return c.JSON(fiber.Map{
 		"status":  "success",
-		"id":      pyq.ID,
+		"id":      resource.ID,
 		"message": "PYQ ingested successfully",
 	})
 }

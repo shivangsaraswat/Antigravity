@@ -43,7 +43,7 @@ func ConnectDB(cfg *config.Config) {
 
 	// Auto Migration
 	log.Println("running migrations")
-	db.AutoMigrate(&models.User{}, &models.PYQ{})
+	db.AutoMigrate(&models.User{}, &models.Resource{})
 
 	DB = db
 }

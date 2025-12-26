@@ -6,16 +6,16 @@ import (
 	"gorm.io/gorm"
 )
 
-// SearchPYQs finds the most similar PYQs to the query embedding
+// SearchResources finds the most similar documents to the query embedding
 // limit: number of results to return
-func SearchPYQs(embedding pgvector.Vector, limit int) ([]models.PYQ, error) {
-	var pyqs []models.PYQ
+func SearchResources(embedding pgvector.Vector, limit int) ([]models.Resource, error) {
+	var resources []models.Resource
 
 	// Cosine distance operator is <=>
 	// Use gorm.Expr to pass parameters to Order
 	err := DB.Order(gorm.Expr("embedding <=> ?", embedding)).
 		Limit(limit).
-		Find(&pyqs).Error
+		Find(&resources).Error
 
-	return pyqs, err
+	return resources, err
 }

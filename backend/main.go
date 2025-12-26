@@ -23,13 +23,12 @@ func main() {
 	// Init Auth
 	auth.InitAuth(cfg)
 
-	// Init AI
-	aiClient := ai.NewAIClient(cfg)
-	// defer aiClient.Close() // Keep open for server lifetime
+	// Init Brain (Python AI Service)
+	brainClient := ai.NewBrainClient(cfg.BrainURL)
 
 	// Init Handlers
-	ingestHandler := handlers.NewIngestHandler(aiClient)
-	chatHandler := handlers.NewChatHandler(aiClient)
+	ingestHandler := handlers.NewIngestHandler(brainClient)
+	chatHandler := handlers.NewChatHandler(brainClient)
 
 	// Initialize Fiber app
 	app := fiber.New(fiber.Config{

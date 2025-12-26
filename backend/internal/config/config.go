@@ -18,6 +18,7 @@ type Config struct {
 	GoogleClientID     string
 	GoogleClientSecret string
 	JWTSecret          string
+	BrainURL           string
 }
 
 func LoadConfig() *Config {
@@ -35,6 +36,7 @@ func LoadConfig() *Config {
 		GoogleClientID:     getEnv("GOOGLE_CLIENT_ID", ""),
 		GoogleClientSecret: getEnv("GOOGLE_CLIENT_SECRET", ""),
 		JWTSecret:          getEnv("JWT_SECRET", "super_secret_key_change_me"),
+		BrainURL:           getEnv("BRAIN_URL", "http://localhost:8000"),
 	}
 }
 

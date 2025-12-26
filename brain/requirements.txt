@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+python-dotenv
+langchain
+langchain-google-genai
+llama-index
+llama-index-llms-gemini
+llama-index-embeddings-gemini
+pydantic
+python-multipart
+psycopg2-binary
+sqlalchemy
