@@ -11,6 +11,7 @@ import (
 	"github.com/shivang/antigravity/backend/internal/config"
 	"github.com/shivang/antigravity/backend/internal/database"
 	"github.com/shivang/antigravity/backend/internal/handlers"
+	"github.com/shivang/antigravity/backend/internal/middleware"
 )
 
 func main() {
@@ -27,8 +28,10 @@ func main() {
 	brainClient := ai.NewBrainClient(cfg.BrainURL)
 
 	// Init Handlers
+	// Init Handlers
 	ingestHandler := handlers.NewIngestHandler(brainClient)
 	chatHandler := handlers.NewChatHandler(brainClient)
+	authHandler := handlers.NewAuthHandler()
 
 	// Initialize Fiber app
 	app := fiber.New(fiber.Config{
@@ -40,12 +43,18 @@ func main() {
 	app.Use(cors.New())
 
 	// Auth Routes
+	app.Post("/auth/register", authHandler.Register)
+	app.Post("/auth/login", authHandler.Login)
 	app.Get("/auth/google", auth.GoogleLogin)
 	app.Get("/auth/google/callback", auth.GoogleCallback)
 
-	// Ingest Routes (Protected? For now public for demo)
-	app.Post("/ingest", ingestHandler.IngestPYQ)
-	app.Post("/chat", chatHandler.Chat)
+	// Protected Routes (Chat & History)
+	api := app.Group("/", middleware.Protected())
+	api.Post("/ingest", ingestHandler.IngestPYQ)
+	api.Post("/chat/stream", chatHandler.ChatStream) // Main chat endpoint
+	api.Get("/history", chatHandler.GetHistory)
+	api.Get("/session/:id", chatHandler.GetSession)
+	api.Delete("/session/:id", chatHandler.DeleteSession)
 
 	// Sandbox Routes
 	app.Post("/sandbox/run", handlers.RunCode)

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
@@ -24,7 +24,17 @@ import { useChat } from "@/context/ChatContext";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useEffect, useState } from "react";
 
+// ... existing apps array ...
 const apps = [
     { href: "/dashboard", label: "Orbit", icon: BrainCircuit },
     { href: "/dashboard/exams", label: "Exam Hall", icon: GraduationCap },
@@ -35,7 +45,24 @@ const apps = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
     const { sessions, currentSessionId, createNewSession, selectSession, deleteSession } = useChat();
+    const [user, setUser] = useState<{ name: string, email: string } | null>(null);
+
+    useEffect(() => {
+        const stored = localStorage.getItem("ag_user");
+        if (stored) {
+            try {
+                setUser(JSON.parse(stored));
+            } catch (e) { }
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("ag_token");
+        localStorage.removeItem("ag_user");
+        router.push("/auth/login");
+    };
 
     return (
         <aside className="hidden md:flex flex-col w-[260px] h-screen sticky top-0 bg-[#000000] z-50 transition-all duration-300 border-r border-white/10">
@@ -49,8 +76,7 @@ export function Sidebar() {
                     <div className="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center shrink-0">
                         <Plus className="w-4 h-4" />
                     </div>
-                    <span>New chat</span>
-                    <span className="ml-auto opacity-50"><Plus className="w-4 h-4" /></span>
+                    <span className="truncate">New chat</span>
                 </Button>
 
                 {/* Search Placeholder - Visual only for now */}
@@ -149,17 +175,42 @@ export function Sidebar() {
 
             {/* Footer Profile */}
             <div className="p-3 border-t border-white/5 bg-[#000000]">
-                <button className="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-zinc-900 transition-colors text-left group">
-                    <Avatar className="w-8 h-8 rounded-sm">
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback className="rounded-sm bg-purple-600 text-white">S</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">Shivang</p>
-                        <p className="text-xs text-slate-500">Free Plan</p>
-                    </div>
-                    <Settings className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
-                </button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-zinc-900 transition-colors text-left group focus:outline-none">
+                            <Avatar className="w-8 h-8 rounded-sm">
+                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarFallback className="rounded-sm bg-purple-600 text-white">
+                                    {user?.name?.[0] || "U"}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-white truncate">
+                                    {user?.name || "Guest User"}
+                                </p>
+                                <p className="text-xs text-slate-500">Free Plan</p>
+                            </div>
+                            <Settings className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 bg-zinc-950 border-white/10 text-white" align="end" forceMount>
+                        <DropdownMenuLabel className="font-normal">
+                            <div className="flex flex-col space-y-1">
+                                <p className="text-sm font-medium leading-none">{user?.name || "Guest"}</p>
+                                <p className="text-xs leading-none text-zinc-400">{user?.email || "guest@example.com"}</p>
+                            </div>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-white/10" />
+                        <DropdownMenuItem className="cursor-pointer focus:bg-zinc-900 focus:text-white">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 focus:text-red-400 focus:bg-red-500/10">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Log out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </aside>
     );

@@ -144,41 +144,42 @@ export default function DashboardPage() {
                                 animate={{ opacity: 1 }}
                                 className="w-full space-y-8 pb-10"
                             >
-                                {currentMessages.map((msg, idx) => (
-                                    <div
-                                        key={msg.id}
-                                        className={cn("flex gap-4 w-full", msg.role === 'user' ? "justify-end" : "justify-start")}
-                                    >
-                                        {msg.role === 'ai' && (
-                                            <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center shrink-0 mt-1 bg-black text-white">
-                                                <BrainCircuit className="w-5 h-5" />
-                                            </div>
-                                        )}
+                                {currentMessages.map((msg, idx) => {
+                                    const isLast = idx === currentMessages.length - 1;
+                                    const isThinking = isLast && msg.role === 'ai' && loading;
 
-                                        <div className={cn(
-                                            "max-w-[85%] space-y-1",
-                                            msg.role === 'user' ? "bg-[#2a2a2a] px-4 py-3 rounded-2xl rounded-tr-sm" : "px-1"
-                                        )}>
-                                            <div className="prose prose-invert prose-p:leading-relaxed prose-pre:bg-[#1e1e1e] prose-pre:border prose-pre:border-white/10 prose-headings:text-slate-100 prose-ul:my-2 prose-li:my-0.5 max-w-none text-[1rem] text-[#e3e3e3]">
-                                                {msg.role === 'ai' ? (
-                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                        {msg.content}
-                                                    </ReactMarkdown>
-                                                ) : (
-                                                    <p className="whitespace-pre-wrap m-0 text-sm">{msg.content}</p>
-                                                )}
+                                    return (
+                                        <div
+                                            key={msg.id}
+                                            className={cn("flex gap-4 w-full", msg.role === 'user' ? "justify-end" : "justify-start")}
+                                        >
+                                            {msg.role === 'ai' && (
+                                                <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center shrink-0 mt-1 bg-black text-white">
+                                                    {isThinking ? (
+                                                        <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+                                                    ) : (
+                                                        <BrainCircuit className="w-5 h-5" />
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            <div className={cn(
+                                                "max-w-[85%] space-y-1",
+                                                msg.role === 'user' ? "bg-[#2a2a2a] px-4 py-3 rounded-2xl rounded-tr-sm" : "px-1"
+                                            )}>
+                                                <div className="prose prose-invert prose-p:leading-relaxed prose-pre:bg-[#1e1e1e] prose-pre:border prose-pre:border-white/10 prose-headings:text-slate-100 prose-ul:my-2 prose-li:my-0.5 max-w-none text-[1rem] text-[#e3e3e3]">
+                                                    {msg.role === 'ai' ? (
+                                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                            {msg.content}
+                                                        </ReactMarkdown>
+                                                    ) : (
+                                                        <p className="whitespace-pre-wrap m-0 text-sm">{msg.content}</p>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-
-                                {loading && (
-                                    <div className="flex gap-4 w-full">
-                                        <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center shrink-0 mt-1 bg-black">
-                                            <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-                                        </div>
-                                    </div>
-                                )}
+                                    );
+                                })}
                                 <div ref={chatsEndRef} />
                             </motion.div>
                         )}

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uvicorn
 import os
@@ -16,6 +17,7 @@ ingestion_service = IngestionService()
 class ChatRequest(BaseModel):
     message: str
     category: str = "all"
+    history: list = [] # New: Support history
 
 @app.get("/")
 async def root():
@@ -24,10 +26,14 @@ async def root():
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
-        response = chat_service.ask(request.message, request.category)
+        response = chat_service.ask(request.message, request.category, request.history)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/chat/stream")
+async def chat_stream(request: ChatRequest):
+    return StreamingResponse(chat_service.stream_ask(request.message, request.category, request.history), media_type="text/plain")
 
 class EmbeddingRequest(BaseModel):
     text: str

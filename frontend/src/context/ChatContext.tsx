@@ -37,43 +37,85 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Initial Load
+    // Initial Load - Fetch from Backend
     useEffect(() => {
-        const saved = localStorage.getItem("ag_chat_history");
-        if (saved) {
+        const token = localStorage.getItem("ag_token");
+        if (!token) return;
+
+        const fetchHistory = async () => {
             try {
-                const parsed = JSON.parse(saved);
-                setSessions(parsed);
-                // Optionally select the most recent one? Or start empty.
+                const res = await fetch("http://localhost:8080/history", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    // Map backend sessions to frontend structure (if needed)
+                    // The backend returns {id, title, ...}. Messages are not loaded by default list.
+                    // We might need to fetch messages when selecting a session.
+                    setSessions(data.map((s: any) => ({
+                        id: s.id,
+                        title: s.title,
+                        messages: [], // Initially empty, load on select
+                        timestamp: new Date(s.CreatedAt).getTime()
+                    })));
+                }
             } catch (e) {
-                console.error("Failed to load chat history", e);
+                console.error("Failed to load history", e);
             }
-        }
+        };
+        fetchHistory();
     }, []);
 
-    // Save on Change
+    // Load messages when selecting a session
     useEffect(() => {
-        localStorage.setItem("ag_chat_history", JSON.stringify(sessions));
-    }, [sessions]);
+        if (!currentSessionId) return;
+
+        const session = sessions.find(s => s.id === currentSessionId);
+        // If messages are empty (and it's not a brand new local session), fetch them
+        if (session && session.messages.length === 0 && session.id.length > 10) { // Check if valid UUID not temp
+            const fetchMessages = async () => {
+                const token = localStorage.getItem("ag_token");
+                const res = await fetch(`http://localhost:8080/session/${currentSessionId}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setSessions(prev => prev.map(s => {
+                        if (s.id === currentSessionId) {
+                            return {
+                                ...s,
+                                messages: data.messages.map((m: any) => ({
+                                    id: m.id,
+                                    role: m.role,
+                                    content: m.content,
+                                    timestamp: new Date(m.CreatedAt).getTime()
+                                }))
+                            };
+                        }
+                        return s;
+                    }));
+                }
+            }
+            fetchMessages();
+        }
+    }, [currentSessionId]);
 
     const currentMessages = sessions.find(s => s.id === currentSessionId)?.messages || [];
 
     const createNewSession = () => {
-        const newSession: ChatSession = {
-            id: uuidv4(),
-            title: "New Chat",
-            messages: [],
-            timestamp: Date.now()
-        };
-        setSessions(prev => [newSession, ...prev]);
-        setCurrentSessionId(newSession.id);
+        setCurrentSessionId(null);
     };
 
     const selectSession = (sessionId: string) => {
         setCurrentSessionId(sessionId);
     };
 
-    const deleteSession = (sessionId: string) => {
+    const deleteSession = async (sessionId: string) => {
+        const token = localStorage.getItem("ag_token");
+        await fetch(`http://localhost:8080/session/${sessionId}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
         setSessions(prev => prev.filter(s => s.id !== sessionId));
         if (currentSessionId === sessionId) {
             setCurrentSessionId(null);
@@ -81,22 +123,24 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
 
     const sendMessage = async (content: string) => {
-        let activeSessionId = currentSessionId;
-
-        // If no session exists, create one immediately
-        if (!activeSessionId) {
-            const newSession: ChatSession = {
-                id: uuidv4(),
-                title: content.substring(0, 30) + (content.length > 30 ? "..." : ""),
-                messages: [],
-                timestamp: Date.now()
-            };
-            // logic to add session immediately locally
-            setSessions(prev => [newSession, ...prev]);
-            activeSessionId = newSession.id;
-            setCurrentSessionId(activeSessionId);
+        const token = localStorage.getItem("ag_token");
+        if (!token) {
+            // Redirect to login if needed, or handle error
+            console.error("No auth token");
+            return;
         }
 
+        let activeSessionId = currentSessionId;
+
+        // Optimistic UI for new chat
+        if (!activeSessionId) {
+            // We don't have a real ID yet. We can start a temporary one
+            // or just rely on backend to return one (but we need to stream).
+            // Strategy: Assume we are creating a new one.
+            // Backend creates session if sessionId is empty.
+        }
+
+        // Add User Message Optimistically
         const userMsg: Message = {
             id: uuidv4(),
             role: 'user',
@@ -104,46 +148,135 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             timestamp: Date.now()
         };
 
-        // UI Update (Optimistic)
-        setSessions(prev => prev.map(s => {
-            if (s.id === activeSessionId) {
-                return {
-                    ...s,
-                    messages: [...s.messages, userMsg],
-                    // Update title if it's "New Chat" and this is first message
-                    title: s.messages.length === 0 ? (content.substring(0, 30) + "...") : s.title
-                };
-            }
-            return s;
-        }));
+        // If 'activeSessionId' is null, it means we are in "New Chat" mode.
+        // We create a temp session in UI to show the message immediately.
+        if (!activeSessionId) {
+            const tempId = uuidv4();
+            const newSession: ChatSession = {
+                id: tempId,
+                title: content.substring(0, 30) + "...",
+                messages: [userMsg],
+                timestamp: Date.now()
+            };
+            setSessions(prev => [newSession, ...prev]);
+            activeSessionId = tempId;
+            setCurrentSessionId(tempId);
+        } else {
+            setSessions(prev => prev.map(s => {
+                if (s.id === activeSessionId) {
+                    return { ...s, messages: [...s.messages, userMsg] };
+                }
+                return s;
+            }));
+        }
 
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:8080/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: content }),
-            });
-
-            if (!res.ok) throw new Error(res.statusText);
-
-            const data = await res.json();
-
-            const aiMsg: Message = {
-                id: uuidv4(),
+            // Create placeholder AI message
+            const aiMsgId = uuidv4();
+            const initialAiMsg: Message = {
+                id: aiMsgId,
                 role: 'ai',
-                content: data.response || "No response.",
-                sources: data.sources,
+                content: "",
                 timestamp: Date.now()
             };
 
             setSessions(prev => prev.map(s => {
                 if (s.id === activeSessionId) {
-                    return { ...s, messages: [...s.messages, aiMsg] };
+                    return { ...s, messages: [...s.messages, initialAiMsg] };
                 }
                 return s;
             }));
+
+            // Prepare History (exclude the just added message for backend context if needed, 
+            // but actually we usually include full history. The backend expects previous history.)
+            // The backend Append mechanism will add the new message.
+            const currentSession = sessions.find(s => s.id === activeSessionId);
+            const history = currentSession?.messages.map(m => ({
+                role: m.role,
+                content: m.content
+            })) || [];
+
+            // If it's a temp ID (client generated), don't send it to backend as "sessionId".
+            // Send empty string so backend creates a new one.
+            // Wait, if it *is* a temp ID, we need to update it with the Real ID from backend later?
+            // This is complex with streaming.
+            // Simplification: Be okay with UI having a temp ID until refresh for now. 
+            // BUT: If the user sends a *second* message, we need the real ID.
+            // Problem: Streaming response doesn't return the SessionID in headers easily unless we parse it.
+            // Fix: We'll stick to not sending SessionID for the *first* message. 
+            // AND we assume for this session the UI keeps using the TempID? No, that breaks persistence on second msg.
+
+            // Allow backend to handle "sessionId" as optional.
+            // Ideally, the first chunk or headers should contain the new SessionID.
+            // For now, let's just make it work. The user will likely refresh or we can silently fetch history after.
+
+            const payloadSessionId = (activeSessionId && activeSessionId.length > 10 && !activeSessionId.includes("-")) ? activeSessionId : "";
+            // UUIDs have dashes. Our temp UUID has dashes. Postgres UUID has dashes. 
+            // Determining if it's "real" or "temp" is hard if both are UUIDs.
+            // Let's assume if it is newly created in this function call (was null), it's new.
+
+            // Actually, we can just send the UUID. If backend doesn't find it, it creates new?
+            // No, backend expects existing ID.
+            // Let's pass empty string if it's the very first message of a "New Chat".
+            const isNewChat = sessions.find(s => s.id === activeSessionId)?.messages.length === 1; // Only user msg
+
+            const res = await fetch("http://localhost:8080/chat/stream", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    sessionId: isNewChat ? "" : activeSessionId, // Send empty if new
+                    message: content,
+                    history: history
+                }),
+            });
+
+            if (!res.ok) throw new Error(res.statusText);
+
+            // Check for Session ID update
+            const realSessionId = res.headers.get("X-Session-ID");
+            if (realSessionId && realSessionId !== activeSessionId) {
+                // Update local state with real ID
+                setSessions(prev => prev.map(s => {
+                    if (s.id === activeSessionId) {
+                        return { ...s, id: realSessionId }; // Swap ID
+                    }
+                    return s;
+                }));
+                setCurrentSessionId(realSessionId);
+                activeSessionId = realSessionId; // Update ref for streaming loop
+            }
+
+            if (!res.body) throw new Error("No response body");
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let aiContent = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                aiContent += chunk;
+
+                // Update the specific message in state
+                setSessions(prev => prev.map(s => {
+                    if (s.id === activeSessionId) {
+                        return {
+                            ...s,
+                            messages: s.messages.map(m =>
+                                m.id === aiMsgId ? { ...m, content: aiContent } : m
+                            )
+                        };
+                    }
+                    return s;
+                }));
+            }
 
         } catch (e: any) {
             const errorMsg: Message = {
