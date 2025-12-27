@@ -81,7 +81,12 @@ type StartExamRequest struct {
 
 // StartExam creates a new exam attempt
 func (h *ExamHandler) StartExam(c *fiber.Ctx) error {
-	userID := c.Locals("userId").(uint)
+	// Safe type assertion
+	uID := c.Locals("user_id")
+	if uID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not found"})
+	}
+	userID := uID.(uint)
 
 	var req StartExamRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -131,7 +136,11 @@ type SaveResponseRequest struct {
 // SaveResponse saves a user's response to a question
 func (h *ExamHandler) SaveResponse(c *fiber.Ctx) error {
 	attemptID := c.Params("id")
-	userID := c.Locals("userId").(uint)
+	uID := c.Locals("user_id")
+	if uID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not found"})
+	}
+	userID := uID.(uint)
 
 	var req SaveResponseRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -182,7 +191,11 @@ func (h *ExamHandler) SaveResponse(c *fiber.Ctx) error {
 // SubmitExam finalizes the exam and calculates score
 func (h *ExamHandler) SubmitExam(c *fiber.Ctx) error {
 	attemptID := c.Params("id")
-	userID := c.Locals("userId").(uint)
+	uID := c.Locals("user_id")
+	if uID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not found"})
+	}
+	userID := uID.(uint)
 
 	var attempt models.ExamAttempt
 	if err := database.DB.First(&attempt, "id = ? AND user_id = ?", attemptID, userID).Error; err != nil {
@@ -258,7 +271,11 @@ func (h *ExamHandler) SubmitExam(c *fiber.Ctx) error {
 // GetAttempt returns details of an exam attempt
 func (h *ExamHandler) GetAttempt(c *fiber.Ctx) error {
 	attemptID := c.Params("id")
-	userID := c.Locals("userId").(uint)
+	uID := c.Locals("user_id")
+	if uID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not found"})
+	}
+	userID := uID.(uint)
 
 	var attempt models.ExamAttempt
 	if err := database.DB.First(&attempt, "id = ? AND user_id = ?", attemptID, userID).Error; err != nil {
@@ -272,7 +289,11 @@ func (h *ExamHandler) GetAttempt(c *fiber.Ctx) error {
 
 // GetUserAttempts returns all exam attempts for a user
 func (h *ExamHandler) GetUserAttempts(c *fiber.Ctx) error {
-	userID := c.Locals("userId").(uint)
+	uID := c.Locals("user_id")
+	if uID == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "User not found"})
+	}
+	userID := uID.(uint)
 
 	var attempts []models.ExamAttempt
 	if err := database.DB.Where("user_id = ?", userID).Order("created_at DESC").Find(&attempts).Error; err != nil {

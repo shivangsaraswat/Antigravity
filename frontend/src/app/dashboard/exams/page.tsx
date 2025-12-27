@@ -105,7 +105,7 @@ export default function ExamsPage() {
 
             if (res.ok) {
                 const attempt = await res.json();
-                router.push(`/dashboard/exams/live/${attempt.id}`);
+                router.push(`/exam/live/${attempt.id}`);
             }
         } catch (e) {
             console.error("Failed to start exam", e);
