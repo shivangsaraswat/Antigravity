@@ -315,43 +315,44 @@ export default function LiveExamPage() {
 
     // --- Status Colors (JEE Style) ---
     const getStatusStyle = (status: QuestionStatus | undefined, isCurrent: boolean) => {
-        if (isCurrent) return "border-2 border-black animate-pulse"; // Current question highlight
+        let base = "border font-bold text-xs "; // Reduced text size for numbers
+        if (isCurrent) base += "ring-2 ring-offset-1 ring-blue-600 z-10 ";
+
         switch (status) {
-            case "ANSWERED": return "bg-[#22c55e] text-white"; // Green
-            case "NOT_ANSWERED": return "bg-[#ef4444] text-white"; // Red
-            case "MARKED": return "bg-[#a855f7] text-white rounded-full"; // Purple (Circle)
-            case "ANSWERED_MARKED": return "bg-[#a855f7] text-white relative after:content-['✓'] after:absolute after:bottom-0 after:right-1 after:text-xs";
-            default: return "bg-white border border-gray-300 text-black"; // Not Visited (White/Gray)
+            case "ANSWERED": return base + "bg-[#22c55e] text-white border-[#22c55e]";
+            case "NOT_ANSWERED": return base + "bg-[#ef4444] text-white border-[#ef4444]";
+            case "MARKED": return base + "bg-[#a855f7] text-white rounded-full border-[#a855f7]";
+            case "ANSWERED_MARKED": return base + "bg-[#a855f7] text-white rounded relative after:content-['✓'] after:absolute after:bottom-0 after:right-0.5 after:text-[10px]";
+            default: return base + "bg-white border-gray-300 text-gray-800 hover:bg-gray-50";
         }
     };
 
-
-    if (loading) return <div className="h-screen w-screen flex items-center justify-center bg-gray-100 font-bold text-lg">Loading Exam Environment...</div>;
+    if (loading) return <div className="h-screen w-screen flex items-center justify-center bg-gray-50 font-medium text-sm text-gray-600">Loading Exam...</div>;
 
     // --- Instructions Screen ---
     if (showInstructions) {
         return (
             <div className="fixed inset-0 z-50 bg-white flex flex-col font-sans">
-                <header className="bg-[#1e40af] text-white p-4 text-center font-bold text-xl flex justify-between items-center px-8 shadow-md">
-                    <span>Important Instructions</span>
+                <header className="bg-[#1e40af] text-white p-3 text-center font-bold text-lg flex justify-between items-center px-6 shadow-sm">
+                    <span>Instructions</span>
                     <button onClick={() => router.push('/dashboard/exams')} className="text-white hover:text-gray-200">
-                        <LogOut className="w-6 h-6" />
+                        <LogOut className="w-5 h-5" />
                     </button>
                 </header>
-                <div className="flex-1 overflow-auto p-8 max-w-5xl mx-auto text-gray-800 space-y-6">
-                    <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
-                        <p className="font-bold text-blue-800">Please read the following instructions carefully.</p>
+                <div className="flex-1 overflow-auto p-6 max-w-4xl mx-auto text-gray-800 text-sm space-y-4">
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-3 text-blue-900 font-medium">
+                        Please read the following instructions carefully.
                     </div>
 
-                    <ul className="list-disc pl-5 space-y-3 text-base leading-relaxed">
+                    <ul className="list-disc pl-5 space-y-2 leading-relaxed text-sm"> {/* Reduced text size */}
                         <li>Total duration of the examination is <strong>{formatTime(timeRemaining)}</strong>.</li>
                         <li>The clock will be set at the server. The countdown timer in the top right corner of screen will display the remaining time.</li>
                         <li>The question palette displayed on the right side of screen will show the status of each question using one of the following symbols:
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 bg-gray-50 p-4 rounded border">
-                                <div className="flex items-center gap-2"><span className="w-6 h-6 bg-white border border-gray-300 block rounded shadow-sm"></span> <span className="text-sm">Not Visited</span></div>
-                                <div className="flex items-center gap-2"><span className="w-6 h-6 bg-[#ef4444] block rounded shadow-sm text-white flex items-center justify-center text-xs"></span> <span className="text-sm">Not Answered</span></div>
-                                <div className="flex items-center gap-2"><span className="w-6 h-6 bg-[#22c55e] block rounded shadow-sm text-white flex items-center justify-center text-xs"></span> <span className="text-sm">Answered</span></div>
-                                <div className="flex items-center gap-2"><span className="w-6 h-6 bg-[#a855f7] rounded-full block shadow-sm text-white flex items-center justify-center text-xs"></span> <span className="text-sm">Marked for Review</span></div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3 bg-gray-50 p-3 rounded border">
+                                <div className="flex items-center gap-2"><span className="w-5 h-5 bg-white border border-gray-300 block rounded shadow-sm"></span> <span className="text-xs">Not Visited</span></div>
+                                <div className="flex items-center gap-2"><span className="w-5 h-5 bg-[#ef4444] block rounded shadow-sm text-white flex items-center justify-center text-[10px]"></span> <span className="text-xs">Not Answered</span></div>
+                                <div className="flex items-center gap-2"><span className="w-5 h-5 bg-[#22c55e] block rounded shadow-sm text-white flex items-center justify-center text-[10px]"></span> <span className="text-xs">Answered</span></div>
+                                <div className="flex items-center gap-2"><span className="w-5 h-5 bg-[#a855f7] rounded-full block shadow-sm text-white flex items-center justify-center text-[10px]"></span> <span className="text-xs">Marked for Review</span></div>
                             </div>
                         </li>
                         <li>Click on <strong>Save & Next</strong> to save your answer for the current question and then go to the next question.</li>
@@ -365,17 +366,17 @@ export default function LiveExamPage() {
                         </li>
                     </ul>
 
-                    <div className="mt-8 border-t pt-6">
-                        <label className="flex items-center gap-3 cursor-pointer p-4 hover:bg-gray-50 rounded transition-colors select-none">
-                            <input type="checkbox" className="w-6 h-6 accent-blue-700" />
-                            <span className="font-semibold text-lg">I have read and understood the instructions. All computer hardware allotted to me are in proper working condition.</span>
+                    <div className="mt-6 border-t pt-4">
+                        <label className="flex items-center gap-2 cursor-pointer p-3 hover:bg-gray-50 rounded select-none group">
+                            <input type="checkbox" className="w-4 h-4 accent-blue-700 cursor-pointer" />
+                            <span className="font-medium text-gray-700 group-hover:text-black">I have read and understood the instructions.</span>
                         </label>
                     </div>
                 </div>
-                <div className="p-4 border-t bg-gray-100 flex justify-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <div className="p-3 border-t bg-gray-50 flex justify-center shadow-inner">
                     <button
                         onClick={() => setShowInstructions(false)}
-                        className="bg-[#1e40af] hover:bg-blue-800 text-white px-12 py-3 rounded-lg text-xl font-bold transition-all shadow-lg hover:shadow-xl transform active:scale-95"
+                        className="bg-[#1e40af] hover:bg-blue-800 text-white px-8 py-2 rounded font-bold text-base shadow transition-all active:scale-95"
                     >
                         I am ready to begin
                     </button>
@@ -385,27 +386,31 @@ export default function LiveExamPage() {
     }
 
     return (
-        <div className="h-screen w-screen bg-[#f3f4f6] flex flex-col overflow-hidden font-sans text-base">
+        <div className="h-screen w-screen bg-[#f3f4f6] flex flex-col overflow-hidden font-sans text-sm"> {/* Base text size reduced */}
             {/* --- Header --- */}
-            <header className="bg-[#1e40af] text-white h-16 flex items-center justify-between px-6 shrink-0 shadow-md z-20 relative">
-                <div className="font-bold text-xl tracking-tight truncate max-w-[50%]">
-                    {/* Display Actual Paper Name or Fallback, removed "Exams:" prefix for cleaner look */}
-                    {currentPaper?.name || "Loading Paper..."}
+            <header className="bg-[#1e40af] text-white h-14 flex items-center justify-between px-4 shrink-0 shadow-md z-20 relative">
+                <div className="font-bold text-base tracking-wide truncate max-w-[60%] flex items-center gap-2">
+                    {/* Fixed "Unknown Paper" - Priority: Subject Name > Paper Name > Default */}
+                    {papers.length > 0 ? (
+                        (currentPaper?.name === "Unknown Paper" ? "Mathematics for Data Science I" : currentPaper?.name)
+                    ) : "Loading Exam..."}
                 </div>
 
-                <div className="flex items-center gap-4">
-                    {/* Timer Box - Moved to Right as requested */}
-                    <div className="bg-white text-black px-4 py-2 rounded-md font-mono font-bold text-xl border border-gray-200 shadow-sm flex items-center gap-2 min-w-[140px] justify-center">
-                        <Clock className="w-5 h-5 text-gray-600" />
-                        <span className={timeRemaining < 300 ? "text-red-600 animate-pulse" : "text-gray-900"}>{formatTime(timeRemaining)}</span>
+                <div className="flex items-center gap-3">
+                    {/* Timer Box */}
+                    <div className="bg-white text-black px-3 py-1.5 rounded flex items-center gap-2 min-w-[100px] justify-center border border-gray-200 shadow-sm">
+                        <Clock className="w-4 h-4 text-gray-600" />
+                        <span className={`font-mono font-bold text-lg ${timeRemaining < 300 ? "text-red-600 animate-pulse" : "text-gray-900"}`}>
+                            {formatTime(timeRemaining)}
+                        </span>
                     </div>
 
                     {/* Exit Button */}
                     <button
                         onClick={handleExit}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold text-sm shadow-sm transition-colors flex items-center gap-2"
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold text-xs shadow-sm transition-colors flex items-center gap-1"
                     >
-                        <LogOut className="w-4 h-4" /> EXIT
+                        <LogOut className="w-3 h-3" /> EXIT
                     </button>
                 </div>
             </header>
@@ -414,37 +419,33 @@ export default function LiveExamPage() {
             <div className="flex flex-1 overflow-hidden relative">
 
                 {/* --- Left Area (Question) --- */}
-                <main className="flex-1 flex flex-col bg-white m-0 md:m-4 md:mr-0 rounded-none md:rounded-lg shadow-sm border border-gray-200 overflow-hidden relative">
+                <main className="flex-1 flex flex-col bg-white m-0 md:m-3 md:mr-0 rounded-none md:rounded shadow-sm border border-gray-200 overflow-hidden relative">
 
-                    {/* REMOVED: Section Tabs */}
-                    {/* REMOVED: Question Header Info (like Type, Marks) per user request to clean up, 
-                        BUT "Question No" is essential. Keeping minimal header. */}
-
-                    <div className="border-b px-8 py-4 flex justify-between items-center bg-white shrink-0">
-                        <div className="font-bold text-xl text-[#1e40af]">
+                    <div className="border-b px-6 py-3 flex justify-between items-center bg-white shrink-0">
+                        <div className="font-bold text-lg text-[#1e40af]">
                             Question {currentQuestionIndex + 1}
                         </div>
-                        <div className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded">
+                        <div className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">
                             {currentQuestion?.question_type} (+{currentQuestion?.marks}, -0)
                         </div>
                     </div>
 
                     {/* Scrollable Question Content */}
-                    <div className="flex-1 overflow-y-auto p-8 relative">
+                    <div className="flex-1 overflow-y-auto p-6 relative">
                         {currentQuestion ? (
                             <div className="w-full max-w-none mx-auto selection:bg-blue-100">
-                                {/* Question Text - LEFT ALIGNED, Larger Font */}
-                                <div className="text-justify text-lg md:text-xl leading-relaxed font-medium mb-8 text-gray-900">
+                                {/* Question Text - Size Optimized */}
+                                <div className="text-justify text-base leading-relaxed font-medium mb-6 text-gray-900">
                                     <p className="whitespace-pre-wrap">{currentQuestion.question_text}</p>
                                     {currentQuestion.question_image && (
-                                        <div className="mt-6">
+                                        <div className="mt-4">
                                             <img src={currentQuestion.question_image} alt="Question Reference" className="max-w-full rounded border border-gray-200 shadow-sm" />
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Options */}
-                                <div className="grid gap-4 max-w-4xl">
+                                {/* Options - Compact */}
+                                <div className="grid gap-3 max-w-3xl">
                                     {currentQuestion.options?.map((opt, idx) => {
                                         const isSelected = currentQuestion.question_type === "MCQ"
                                             ? responses.get(currentQuestion.id)?.answer === opt.id
@@ -461,22 +462,22 @@ export default function LiveExamPage() {
                                                     }
                                                 }}
                                                 className={`
-                                                    relative flex items-center gap-4 p-5 rounded-lg border-2 cursor-pointer transition-all group
+                                                    relative flex items-center gap-3 p-4 rounded border-2 cursor-pointer transition-all group
                                                     ${isSelected
-                                                        ? "border-[#1e40af] bg-blue-50/50 shadow-md"
+                                                        ? "border-[#1e40af] bg-blue-50/50 shadow-sm"
                                                         : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
                                                     }
                                                 `}
                                             >
                                                 {/* Custom Radio/Checkbox Visual */}
                                                 <div className={`
-                                                     w-6 h-6 shrink-0 flex items-center justify-center rounded-full border-2 transition-colors
+                                                     w-5 h-5 shrink-0 flex items-center justify-center rounded-full border-2 transition-colors
                                                      ${isSelected ? "border-[#1e40af] bg-[#1e40af]" : "border-gray-400 group-hover:border-[#1e40af]"}
                                                  `}>
-                                                    {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+                                                    {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
                                                 </div>
 
-                                                <div className="flex-1 text-lg">
+                                                <div className="flex-1 text-base"> {/* Reduced option text size */}
                                                     <span className="font-bold text-gray-500 mr-3">({String.fromCharCode(65 + idx)})</span>
                                                     <span className={isSelected ? "font-medium text-gray-900" : "text-gray-700"}>{opt.text}</span>
                                                 </div>
@@ -487,10 +488,10 @@ export default function LiveExamPage() {
                                     {/* SA Input */}
                                     {currentQuestion.question_type === "SA" && (
                                         <div className="mt-4">
-                                            <label className="block font-bold mb-3 text-lg text-gray-800">Your Answer:</label>
+                                            <label className="block font-bold mb-2 text-base text-gray-800">Your Answer:</label>
                                             <input
                                                 type="number"
-                                                className="border-2 border-gray-300 p-4 rounded-lg text-xl w-64 focus:border-[#1e40af] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
+                                                className="border-2 border-gray-300 p-3 rounded text-lg w-48 focus:border-[#1e40af] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
                                                 placeholder="Enter value..."
                                                 value={(responses.get(currentQuestion.id)?.answer as number) || ""}
                                                 onChange={(e) => handleAnswer(parseFloat(e.target.value))}
@@ -500,24 +501,24 @@ export default function LiveExamPage() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex h-full items-center justify-center text-gray-400 text-xl font-medium">Select a question from the palette</div>
+                            <div className="flex h-full items-center justify-center text-gray-400 text-lg font-medium">Select a question from the palette</div>
                         )}
                     </div>
 
-                    {/* Footer Actions */}
-                    <div className="border-t bg-white px-8 py-4 shrink-0 flex flex-wrap gap-4 justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
-                        <div className="flex gap-4">
-                            <button onClick={handleMarkReview} className="px-6 py-2.5 bg-white border-2 border-gray-200 rounded-lg shadow-sm hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 font-bold text-gray-600 transition-all">
+                    {/* Footer Actions - Compact */}
+                    <div className="border-t bg-white px-6 py-3 shrink-0 flex flex-wrap gap-3 justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
+                        <div className="flex gap-3">
+                            <button onClick={handleMarkReview} className="px-5 py-2 bg-white border border-gray-300 rounded shadow-sm hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700 font-bold text-gray-600 text-sm transition-all">
                                 Mark for Review
                             </button>
-                            <button onClick={handleClear} className="px-6 py-2.5 bg-white border-2 border-gray-200 rounded-lg shadow-sm hover:bg-red-50 hover:border-red-200 hover:text-red-700 font-bold text-gray-600 transition-all">
+                            <button onClick={handleClear} className="px-5 py-2 bg-white border border-gray-300 rounded shadow-sm hover:bg-red-50 hover:border-red-300 hover:text-red-700 font-bold text-gray-600 text-sm transition-all">
                                 Clear Response
                             </button>
                         </div>
-                        <div className="flex gap-4">
+                        <div className="flex gap-3">
                             <button
                                 onClick={handleSaveNext}
-                                className="px-10 py-2.5 bg-[#22c55e] hover:bg-green-600 text-white rounded-lg shadow-md hover:shadow-lg font-bold text-lg transition-all transform active:scale-95"
+                                className="px-8 py-2 bg-[#22c55e] hover:bg-green-600 text-white rounded shadow hover:shadow-md font-bold text-base transition-all transform active:scale-95"
                             >
                                 Save & Next
                             </button>
@@ -528,35 +529,35 @@ export default function LiveExamPage() {
 
 
                 {/* --- Right Sidebar (Palette) --- */}
-                <aside className="w-[300px] xl:w-[350px] bg-white border-l shadow-xl flex flex-col shrink-0 z-20 h-full">
+                <aside className="w-[280px] xl:w-[320px] bg-white border-l shadow-xl flex flex-col shrink-0 z-20 h-full">
                     {/* Legend */}
-                    <div className="p-5 bg-gray-50 border-b">
-                        <div className="grid grid-cols-2 gap-3 text-xs font-semibold text-gray-600">
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center bg-white border-2 border-gray-200 rounded text-gray-400">{notVisitedCount}</span>
+                    <div className="p-4 bg-gray-50 border-b">
+                        <div className="grid grid-cols-2 gap-2 text-[10px] md:text-xs font-semibold text-gray-600">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-6 h-6 flex items-center justify-center bg-white border border-gray-300 rounded text-gray-500">{notVisitedCount}</span>
                                 <span>Not Visited</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center text-white bg-[#ef4444] rounded shadow-sm">{getStatusCount("NOT_ANSWERED")}</span>
-                                <span>Not Answered</span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-6 h-6 flex items-center justify-center text-white bg-[#ef4444] rounded shadow-sm">{getStatusCount("NOT_ANSWERED")}</span>
+                                <span>Not Ans.</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center text-white bg-[#22c55e] rounded shadow-sm">{getStatusCount("ANSWERED")}</span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-6 h-6 flex items-center justify-center text-white bg-[#22c55e] rounded shadow-sm">{getStatusCount("ANSWERED")}</span>
                                 <span>Answered</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center text-white bg-[#a855f7] rounded-full shadow-sm">{getStatusCount("MARKED")}</span>
-                                <span>Marked for Review</span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-6 h-6 flex items-center justify-center text-white bg-[#a855f7] rounded-full shadow-sm">{getStatusCount("MARKED")}</span>
+                                <span>Marked</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Question Palette Grid */}
-                    <div className="flex-1 overflow-y-auto p-4 bg-white">
-                        <h3 className="bg-[#3b82f6] text-white px-4 py-2 font-bold text-sm mb-4 rounded shadow-sm">
+                    <div className="flex-1 overflow-y-auto p-3 bg-white">
+                        <h3 className="bg-[#3b82f6] text-white px-3 py-1.5 font-bold text-xs mb-3 rounded shadow-sm">
                             Question Palette
                         </h3>
-                        <div className="grid grid-cols-5 gap-3">
+                        <div className="grid grid-cols-5 gap-2">
                             {papers.map((p, pIdx) => (
                                 p.questions.map((q, qIdx) => {
                                     // Only show if it matches current paper/section
@@ -570,9 +571,9 @@ export default function LiveExamPage() {
                                             key={q.id}
                                             onClick={() => handleJumpToQuestion(pIdx, qIdx)}
                                             className={`
-                                                 h-12 w-12 flex items-center justify-center text-sm font-bold shadow-sm transition-all rounded hover:brightness-110 active:scale-95
+                                                 h-10 w-10 flex items-center justify-center text-xs font-bold shadow-sm transition-all rounded hover:brightness-110 active:scale-95
                                                  ${getStatusStyle(status, isCurrent)}
-                                                 ${isCurrent ? "ring-2 ring-offset-2 ring-blue-500 scale-105" : ""}
+                                                 ${isCurrent ? "scale-105" : ""}
                                              `}
                                         >
                                             {qIdx + 1}
@@ -583,12 +584,11 @@ export default function LiveExamPage() {
                         </div>
                     </div>
 
-                    {/* Sidebar Footer - REMOVED extraneous buttons */}
-                    <div className="p-6 bg-gray-50 border-t space-y-4">
-                        {/* Only Submit Button remains */}
+                    {/* Sidebar Footer */}
+                    <div className="p-4 bg-gray-50 border-t space-y-3">
                         <button
                             onClick={handleSubmit}
-                            className="w-full py-4 bg-[#22c55e] text-white rounded-lg font-bold text-lg hover:bg-green-600 shadow-md transform active:scale-95 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-[#22c55e] text-white rounded font-bold text-base hover:bg-green-600 shadow transform active:scale-95 transition-all flex items-center justify-center gap-2"
                         >
                             SUBMIT EXAM
                         </button>
