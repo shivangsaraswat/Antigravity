@@ -5,6 +5,8 @@ load_dotenv(dotenv_path="../backend/.env") # Link to your existing backend env
 
 class Config:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Fallback LLM #1
+    CEREBRAS_API_KEY = os.getenv("CEREBRAS_API_KEY")  # Fallback LLM #2
     DATABASE_URL = os.getenv("DATABASE_URL") # Ensure this is in your .env
     # Fallback if DATABASE_URL isn't full
     DB_HOST = os.getenv("DB_HOST", "localhost")

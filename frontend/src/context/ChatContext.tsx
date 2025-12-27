@@ -255,27 +255,50 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
-            let aiContent = "";
 
+            // SMOOTH TYPING LOGIC
+            // 1. We accumulate raw data in a buffer
+            let streamBuffer = "";
+            let isStreamDone = false;
+
+            // 2. We set up an interval to "type" characters from the buffer to the UI
+            // This runs independently of the network speed
+            const TYPING_SPEED_MS = 15; // Fast but readable (adjust as needed)
+
+            const typingInterval = setInterval(() => {
+                if (streamBuffer.length > 0) {
+                    // Take a chunk of characters (1-3 chars for natural variance)
+                    const charCount = Math.floor(Math.random() * 3) + 1;
+                    const chunk = streamBuffer.substring(0, charCount);
+                    streamBuffer = streamBuffer.substring(charCount);
+
+                    setSessions(prev => prev.map(s => {
+                        if (s.id === activeSessionId) {
+                            return {
+                                ...s,
+                                messages: s.messages.map(m =>
+                                    m.id === aiMsgId ? { ...m, content: m.content + chunk } : m
+                                )
+                            };
+                        }
+                        return s;
+                    }));
+                } else if (isStreamDone) {
+                    // Buffer is empty AND network is done -> stop typing
+                    clearInterval(typingInterval);
+                }
+            }, TYPING_SPEED_MS);
+
+            // 3. Network Reader Loop
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) break;
-
+                if (done) {
+                    isStreamDone = true;
+                    break;
+                }
                 const chunk = decoder.decode(value, { stream: true });
-                aiContent += chunk;
-
-                // Update the specific message in state
-                setSessions(prev => prev.map(s => {
-                    if (s.id === activeSessionId) {
-                        return {
-                            ...s,
-                            messages: s.messages.map(m =>
-                                m.id === aiMsgId ? { ...m, content: aiContent } : m
-                            )
-                        };
-                    }
-                    return s;
-                }));
+                // Push to buffer, don't update state directly here
+                streamBuffer += chunk;
             }
 
         } catch (e: any) {

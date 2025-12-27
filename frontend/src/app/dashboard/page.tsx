@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, GraduationCap, Code2, MessageSquare, Book, BrainCircuit } from "lucide-react";
@@ -15,11 +15,25 @@ export default function DashboardPage() {
     const hasStarted = currentMessages.length > 0;
 
     const chatsEndRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [isAtBottom, setIsAtBottom] = useState(true);
+
+    // Scroll Handler to detect if user is at bottom
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+        // Check if user is near bottom (within 100px)
+        const isBottom = scrollHeight - scrollTop - clientHeight < 100;
+        setIsAtBottom(isBottom);
+    };
+
+    // Auto-scroll Effect
     useEffect(() => {
-        if (hasStarted) {
-            chatsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (hasStarted && isAtBottom) {
+            // Use 'auto' instead of 'smooth' to eliminate jitter during active typing
+            chatsEndRef.current?.scrollIntoView({ behavior: loading ? "auto" : "smooth" });
         }
-    }, [currentMessages, loading, hasStarted]);
+    }, [currentMessages, loading, hasStarted, isAtBottom]);
 
     const suggestions = [
         "Create a study plan for Calculus",
@@ -36,14 +50,19 @@ export default function DashboardPage() {
     ];
 
     const handleSend = async (msg: string) => {
+        setIsAtBottom(true); // Always snap to bottom when sending new message
         await sendMessage(msg);
     }
 
     return (
-        <div className="relative min-h-screen bg-[#000000] text-[#f5f5f5] font-sans selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col">
+        <div className="relative min-h-screen bg-[#171717] text-[#f5f5f5] font-sans selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col">
 
             {/* Scrollable Content Area */}
-            <div className="flex-1 overflow-y-auto px-4 w-full scrollbar-none pb-40">
+            <div
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                className="flex-1 overflow-y-auto px-4 w-full scrollbar-none pb-40"
+            >
                 <div className={cn(
                     "max-w-4xl mx-auto w-full transition-all duration-700 ease-in-out min-h-full flex flex-col",
                     hasStarted ? "justify-start pt-10" : "justify-start pt-[15vh] items-center"
@@ -164,16 +183,16 @@ export default function DashboardPage() {
                                             )}
 
                                             <div className={cn(
-                                                "max-w-[85%] space-y-1",
-                                                msg.role === 'user' ? "bg-[#2a2a2a] px-4 py-3 rounded-2xl rounded-tr-sm" : "px-1"
+                                                "max-w-[100%] space-y-1",
+                                                msg.role === 'user' ? "bg-[#2f2f2f] px-5 py-3.5 rounded-[20px] rounded-br-md" : "pl-0 pr-4"
                                             )}>
-                                                <div className="prose prose-invert prose-p:leading-relaxed prose-pre:bg-[#1e1e1e] prose-pre:border prose-pre:border-white/10 prose-headings:text-slate-100 prose-ul:my-2 prose-li:my-0.5 max-w-none text-[1rem] text-[#e3e3e3]">
+                                                <div className="prose prose-invert prose-p:leading-8 prose-headings:font-semibold prose-headings:text-gray-100 prose-headings:mt-6 prose-headings:mb-3 prose-p:text-[16px] prose-li:text-[16px] prose-p:text-gray-200 prose-strong:text-white prose-pre:bg-[#0d0d0d] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl prose-ul:my-4 prose-li:my-1.5 max-w-none text-[#ececec]">
                                                     {msg.role === 'ai' ? (
                                                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                                             {msg.content}
                                                         </ReactMarkdown>
                                                     ) : (
-                                                        <p className="whitespace-pre-wrap m-0 text-sm">{msg.content}</p>
+                                                        <p className="whitespace-pre-wrap m-0 text-[16px] leading-7">{msg.content}</p>
                                                     )}
                                                 </div>
                                             </div>

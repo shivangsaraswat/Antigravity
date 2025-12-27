@@ -56,9 +56,9 @@ func (h *ChatHandler) DeleteSession(c *fiber.Ctx) error {
 // Helper to get or create session
 func getOrCreateSession(userID uint, sessionID string, firstMessage string) (*models.ChatSession, error) {
 	if sessionID != "" {
-		var session models.ChatSession
-		if err := database.DB.Where("id = ? AND user_id = ?", sessionID, userID).First(&session).Error; err == nil {
-			return &session, nil
+		var sessions []models.ChatSession
+		if err := database.DB.Where("id = ? AND user_id = ?", sessionID, userID).Limit(1).Find(&sessions).Error; err == nil && len(sessions) > 0 {
+			return &sessions[0], nil
 		}
 	}
 
@@ -109,7 +109,7 @@ func (h *ChatHandler) ChatStream(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).SendString("Brain service error: " + err.Error())
 	}
-	defer stream.Close()
+	// NOTE: We close stream inside the callback, NOT with defer here!
 
 	c.Set("Content-Type", "text/plain")
 	c.Set("Transfer-Encoding", "chunked")
@@ -119,6 +119,8 @@ func (h *ChatHandler) ChatStream(c *fiber.Ctx) error {
 	accContent := ""
 
 	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
+		defer stream.Close() // Close stream when callback finishes
+
 		buf := make([]byte, 1024)
 		for {
 			n, err := stream.Read(buf)
