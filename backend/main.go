@@ -32,6 +32,7 @@ func main() {
 	ingestHandler := handlers.NewIngestHandler(brainClient)
 	chatHandler := handlers.NewChatHandler(brainClient)
 	authHandler := handlers.NewAuthHandler()
+	examHandler := handlers.NewExamHandler()
 
 	// Initialize Fiber app
 	app := fiber.New(fiber.Config{
@@ -59,6 +60,16 @@ func main() {
 	api.Get("/history", chatHandler.GetHistory)
 	api.Get("/session/:id", chatHandler.GetSession)
 	api.Delete("/session/:id", chatHandler.DeleteSession)
+
+	// Exam Hall Routes
+	api.Get("/exam/subjects", examHandler.GetSubjects)
+	api.Get("/exam/papers", examHandler.GetPapers)
+	api.Get("/exam/papers/:id", examHandler.GetPaperWithQuestions)
+	api.Post("/exam/start", examHandler.StartExam)
+	api.Post("/exam/attempt/:id/response", examHandler.SaveResponse)
+	api.Post("/exam/attempt/:id/submit", examHandler.SubmitExam)
+	api.Get("/exam/attempt/:id", examHandler.GetAttempt)
+	api.Get("/exam/attempts", examHandler.GetUserAttempts)
 
 	// Sandbox Routes
 	app.Post("/sandbox/run", handlers.RunCode)

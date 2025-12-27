@@ -1,0 +1,101 @@
+Question Paper Name : IIT M FOUNDATION AN EXAM QDF2 03 Aug 2025
+Subject Name : 2025 Aug3: IIT M AN EXAM QDF2
+Creation Date : 2025-07-30 11:13:29
+Duration : 120
+Total Marks : 700
+
+Sem1 Maths1
+Section Id : 64065393530
+Section Number : 1
+Section Marks : 50
+
+Question Number : 1 Question Id : 6406531305362 Question Type : MCQ
+Correct Marks : 0
+Question Label : Multiple Choice Question
+THIS IS QUESTION PAPER FOR THE SUBJECT "FOUNDATION LEVEL : SEMESTER I: MATHEMATICS FOR DATA SCIENCE I (COMPUTER BASED EXAM)"
+ARE YOU SURE YOU HAVE TO WRITE EXAM FOR THIS SUBJECT?
+Options :
+6406534384301. YES
+6406534384302. NO
+
+Question Number : 2 Question Id : 6406531305363 Question Type : MCQ
+Correct Marks : 0
+Question Label : Multiple Choice Question
+Instructions reference question.
+Options :
+6406534384303. Instructions has been mentioned above.
+6406534384304. This Instructions is just for a reference & not for an evaluation.
+
+Question Number : 3 Question Id : 6406531305364 Question Type : MCQ
+Correct Marks : 4
+Question Label : Multiple Choice Question
+Which of the following is the derivative of f(x) = x^2?
+Options :
+6406534384305. 2x (correct)
+6406534384306. x
+6406534384307. x^2
+6406534384308. 2
+
+Question Number : 4 Question Id : 6406531305365 Question Type : MCQ
+Correct Marks : 3
+Question Label : Multiple Choice Question
+What is the integral of 1/x?
+Options :
+6406534384309. ln|x| + C (correct)
+6406534384310. x
+6406534384311. 1/x^2
+6406534384312. e^x
+
+Question Number : 5 Question Id : 6406531305366 Question Type : MSQ
+Correct Marks : 5
+Question Label : Multiple Select Question
+Which of the following are prime numbers?
+Options :
+6406534384313. 2 (correct)
+6406534384314. 3 (correct)
+6406534384315. 4
+6406534384316. 5 (correct)
+
+Question Number : 6 Question Id : 6406531305367 Question Type : MSQ
+Correct Marks : 4
+Question Label : Multiple Select Question
+Select all correct statements about continuity:
+Options :
+6406534384317. f is not continuous.
+6406534384318. f is continuous. (correct)
+6406534384319. g is not continuous.
+6406534384320. g is continuous. (correct)
+
+Question Number : 7 Question Id : 6406531305368 Question Type : MSQ
+Correct Marks : 4
+Question Label : Multiple Select Question
+Which of the following functions are one-one?
+Options :
+6406534384321. f(x) = x^2
+6406534384322. f(x) = x^3 (correct)
+6406534384323. f(x) = sin(x)
+6406534384324. f(x) = e^x (correct)
+
+Question Number : 8 Question Id : 6406531305369 Question Type : SA
+Correct Marks : 2
+Question Label : Short Answer Question
+What is 1 + 1?
+Response Type : Numeric
+Possible Answers :
+2
+
+Question Number : 9 Question Id : 6406531305370 Question Type : SA
+Correct Marks : 3
+Question Label : Short Answer Question
+What is 2^2?
+Response Type : Numeric
+Possible Answers :
+4
+
+Question Number : 10 Question Id : 6406531305371 Question Type : SA
+Correct Marks : 3
+Question Label : Short Answer Question
+How many solutions does x^2 = 4 have?
+Response Type : Numeric
+Possible Answers :
+2

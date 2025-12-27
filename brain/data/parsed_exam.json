@@ -1,0 +1,271 @@
+{
+  "name": "IIT M FOUNDATION AN EXAM QDF2 03 Aug 2025",
+  "subject": "2025 Aug3: IIT M AN EXAM QDF2",
+  "term": "August 2025",
+  "duration_minutes": 120,
+  "total_marks": 700.0,
+  "sections": [],
+  "questions": [
+    {
+      "question_number": 1,
+      "question_id": "6406531305362",
+      "question_type": "MCQ",
+      "question_text": "THIS IS QUESTION PAPER FOR THE SUBJECT \"FOUNDATION LEVEL : SEMESTER I: MATHEMATICS FOR DATA SCIENCE I (COMPUTER BASED EXAM)\" ARE YOU SURE YOU HAVE TO WRITE EXAM FOR THIS SUBJECT?",
+      "marks": 0.0,
+      "options": [
+        {
+          "id": "6406534384301",
+          "text": "YES",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384302",
+          "text": "NO",
+          "is_correct": false
+        }
+      ],
+      "correct_answer": null,
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 2,
+      "question_id": "6406531305363",
+      "question_type": "MCQ",
+      "question_text": "Instructions reference question.",
+      "marks": 0.0,
+      "options": [
+        {
+          "id": "6406534384303",
+          "text": "Instructions has been mentioned above.",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384304",
+          "text": "This Instructions is just for a reference & not for an evaluation.",
+          "is_correct": false
+        }
+      ],
+      "correct_answer": null,
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 3,
+      "question_id": "6406531305364",
+      "question_type": "MCQ",
+      "question_text": "Which of the following is the derivative of f(x) = x^2?",
+      "marks": 4.0,
+      "options": [
+        {
+          "id": "6406534384305",
+          "text": "2x (correct)",
+          "is_correct": true
+        },
+        {
+          "id": "6406534384306",
+          "text": "x",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384307",
+          "text": "x^2",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384308",
+          "text": "2",
+          "is_correct": false
+        }
+      ],
+      "correct_answer": [
+        "6406534384305"
+      ],
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 4,
+      "question_id": "6406531305365",
+      "question_type": "MCQ",
+      "question_text": "What is the integral of 1/x?",
+      "marks": 3.0,
+      "options": [
+        {
+          "id": "6406534384309",
+          "text": "ln|x| + C (correct)",
+          "is_correct": true
+        },
+        {
+          "id": "6406534384310",
+          "text": "x",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384311",
+          "text": "1/x^2",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384312",
+          "text": "e^x",
+          "is_correct": false
+        }
+      ],
+      "correct_answer": [
+        "6406534384309"
+      ],
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 5,
+      "question_id": "6406531305366",
+      "question_type": "MSQ",
+      "question_text": "Which of the following are prime numbers?",
+      "marks": 5.0,
+      "options": [
+        {
+          "id": "6406534384313",
+          "text": "2 (correct)",
+          "is_correct": true
+        },
+        {
+          "id": "6406534384314",
+          "text": "3 (correct)",
+          "is_correct": true
+        },
+        {
+          "id": "6406534384315",
+          "text": "4",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384316",
+          "text": "5 (correct)",
+          "is_correct": true
+        }
+      ],
+      "correct_answer": [
+        "6406534384313",
+        "6406534384314",
+        "6406534384316"
+      ],
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 6,
+      "question_id": "6406531305367",
+      "question_type": "MSQ",
+      "question_text": "Select all correct statements about continuity:",
+      "marks": 4.0,
+      "options": [
+        {
+          "id": "6406534384317",
+          "text": "f is not continuous.",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384318",
+          "text": "f is continuous. (correct)",
+          "is_correct": true
+        },
+        {
+          "id": "6406534384319",
+          "text": "g is not continuous.",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384320",
+          "text": "g is continuous. (correct)",
+          "is_correct": true
+        }
+      ],
+      "correct_answer": [
+        "6406534384318",
+        "6406534384320"
+      ],
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 7,
+      "question_id": "6406531305368",
+      "question_type": "MSQ",
+      "question_text": "Which of the following functions are one-one?",
+      "marks": 4.0,
+      "options": [
+        {
+          "id": "6406534384321",
+          "text": "f(x) = x^2",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384322",
+          "text": "f(x) = x^3 (correct)",
+          "is_correct": true
+        },
+        {
+          "id": "6406534384323",
+          "text": "f(x) = sin(x)",
+          "is_correct": false
+        },
+        {
+          "id": "6406534384324",
+          "text": "f(x) = e^x (correct)",
+          "is_correct": true
+        }
+      ],
+      "correct_answer": [
+        "6406534384322",
+        "6406534384324"
+      ],
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 8,
+      "question_id": "6406531305369",
+      "question_type": "SA",
+      "question_text": "What is 1 + 1?",
+      "marks": 2.0,
+      "options": [],
+      "correct_answer": "2",
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 9,
+      "question_id": "6406531305370",
+      "question_type": "SA",
+      "question_text": "What is 2^2?",
+      "marks": 3.0,
+      "options": [],
+      "correct_answer": "4",
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    },
+    {
+      "question_number": 10,
+      "question_id": "6406531305371",
+      "question_type": "SA",
+      "question_text": "How many solutions does x^2 = 4 have?",
+      "marks": 3.0,
+      "options": [],
+      "correct_answer": "2",
+      "section": "",
+      "is_comprehension_sub": false,
+      "parent_comprehension_id": null
+    }
+  ]
+}

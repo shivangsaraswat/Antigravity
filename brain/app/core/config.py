@@ -14,6 +14,11 @@ class Config:
     DB_USER = os.getenv("DB_USER", "postgres")
     DB_PASS = os.getenv("DB_PASSWORD", "")
     DB_PORT = os.getenv("DB_PORT", "5432")
+    
+    # ImageKit for image hosting
+    IMAGEKIT_PRIVATE_KEY = os.getenv("IMAGEKIT_PRIVATE_KEY", "")
+    IMAGEKIT_PUBLIC_KEY = os.getenv("IMAGEKIT_PUBLIC_KEY", "")
+    IMAGEKIT_URL_ENDPOINT = os.getenv("IMAGEKIT_URL_ENDPOINT", "")
 
     @classmethod
     def get_sqlalchemy_url(cls):
