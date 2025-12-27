@@ -57,7 +57,7 @@ export default function SignupPage() {
                         <BrainCircuit className="w-6 h-6 text-black" />
                     </div>
                     <h2 className="text-3xl font-medium tracking-tight">Create an account</h2>
-                    <p className="text-zinc-400 mt-2">Get started with Antigravity</p>
+                    <p className="text-zinc-400 mt-2">Get started with Orbit</p>
                 </div>
 
                 {/* Form */}

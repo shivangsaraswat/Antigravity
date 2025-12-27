@@ -29,7 +29,7 @@ def sync_github_repo(owner, repo, branch="main", category="academic"):
         print(f"✅ Found {len(documents)} academic documents.")
 
         service = IngestionService()
-        print("🧠 Feeding the Antigravity Brain...")
+        print("🧠 Feeding the Spirit Brain...")
         num_chunks = service.ingest_documents(documents, category)
         
         print(f"✨ Success! Ingested {num_chunks} chunks into the '{category}' category.")
@@ -37,7 +37,7 @@ def sync_github_repo(owner, repo, branch="main", category="academic"):
         print(f"❌ Sync failed: {str(e)}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Sync GitHub repo with Antigravity Brain")
+    parser = argparse.ArgumentParser(description="Sync GitHub repo with Spirit Brain")
     parser.add_argument("--owner", required=True, help="GitHub username/owner")
     parser.add_argument("--repo", required=True, help="GitHub repository name")
     parser.add_argument("--branch", default="main", help="Branch name (default: main)")

@@ -13,7 +13,7 @@ export function BentoGrid() {
             <div className="max-w-6xl mx-auto relative z-10">
                 <div className="text-center mb-16 space-y-4">
                     <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
-                        Powered by <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Antigravity</span>
+                        Powered by <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Spirit</span>
                     </h2>
                     <p className="text-slate-400 max-w-2xl mx-auto text-lg">
                         Explore the modules that make Orbit the most advanced learning ecosystem.
@@ -35,7 +35,7 @@ export function BentoGrid() {
                                 <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/5">
                                     <BrainCircuit className="w-6 h-6 text-white" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white">Antigravity Engine</h3>
+                                <h3 className="text-2xl font-bold text-white">Spirit Engine</h3>
                                 <p className="text-slate-400 leading-relaxed max-w-[90%]">
                                     The neural core of Orbit. It understands your syllabus, predicts key topics, and adapts to your learning style in real-time.
                                 </p>

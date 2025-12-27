@@ -205,7 +205,7 @@ export function Hero() {
                         className="flex justify-center md:justify-start"
                     >
                         <ContainerTextFlip
-                            words={["Unbound", "Limitless", "Antigravity", "Infinite"]}
+                            words={["Unbound", "Limitless", "Spirit", "Infinite"]}
                             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter bg-transparent shadow-none p-0 !m-0 leading-tight"
                             textClassName="text-white"
                         />
@@ -218,7 +218,7 @@ export function Hero() {
                     transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                     className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 leading-relaxed"
                 >
-                    Step into <span className="text-white font-medium">Orbit</span>. The academic ecosystem powered by <span className="text-indigo-400 font-medium">Antigravity</span>.
+                    Step into <span className="text-white font-medium">Orbit</span>. The academic ecosystem powered by <span className="text-indigo-400 font-medium">Spirit</span>.
                     Experience context-aware mentorship, real-time sandboxes, and predictive analytics.
                 </motion.p>
 
@@ -275,7 +275,7 @@ export function Hero() {
                                 <span className="text-green-500">✓</span> Sandbox Environment Ready <span className="text-slate-600 text-xs">[45ms]</span>
                             </p>
                             <p className="text-slate-300 pl-4 pb-2">
-                                <span className="text-green-500">✓</span> <span className="text-purple-400">Antigravity AI</span> Connected
+                                <span className="text-green-500">✓</span> <span className="text-purple-400">Spirit AI</span> Connected
                             </p>
                             <p className="text-slate-400 pt-2">
                                 <span className="text-green-400">➜</span> <span className="text-blue-400">~</span> <span className="animate-pulse">_</span>

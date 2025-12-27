@@ -3,37 +3,50 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, GraduationCap, Code2, MessageSquare, Book, BrainCircuit } from "lucide-react";
+import { Sparkles, GraduationCap, Code2, MessageSquare, Book, BrainCircuit, Square } from "lucide-react";
 import { CommandInput } from "@/components/dashboard/command-input";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { useChat } from "@/context/ChatContext";
+import { OrbitLogo } from "@/components/ui/orbit-logo";
 
 export default function DashboardPage() {
-    const { currentMessages, loading, sendMessage } = useChat();
+    const { currentMessages, loading, sendMessage, stopGeneration } = useChat();
     const hasStarted = currentMessages.length > 0;
 
     const chatsEndRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
+    const userScrolledRef = useRef(false); // Track if user manually scrolled up
 
     // Scroll Handler to detect if user is at bottom
     const handleScroll = () => {
         if (!scrollContainerRef.current) return;
         const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-        // Check if user is near bottom (within 100px)
-        const isBottom = scrollHeight - scrollTop - clientHeight < 100;
+        // Check if user is near bottom (within 150px)
+        const isBottom = scrollHeight - scrollTop - clientHeight < 150;
         setIsAtBottom(isBottom);
+
+        // If user scrolls up during loading, mark that they intentionally scrolled
+        if (!isBottom && loading) {
+            userScrolledRef.current = true;
+        }
+        // If user scrolls back to bottom, reset the flag
+        if (isBottom) {
+            userScrolledRef.current = false;
+        }
     };
 
-    // Auto-scroll Effect
+    // Auto-scroll Effect - only scroll if user hasn't manually scrolled up
     useEffect(() => {
+        // Don't auto-scroll if user deliberately scrolled up
+        if (userScrolledRef.current) return;
+
         if (hasStarted && isAtBottom) {
-            // Use 'auto' instead of 'smooth' to eliminate jitter during active typing
-            chatsEndRef.current?.scrollIntoView({ behavior: loading ? "auto" : "smooth" });
+            chatsEndRef.current?.scrollIntoView({ behavior: "auto" });
         }
-    }, [currentMessages, loading, hasStarted, isAtBottom]);
+    }, [currentMessages, hasStarted, isAtBottom]);
 
     const suggestions = [
         "Create a study plan for Calculus",
@@ -98,7 +111,7 @@ export default function DashboardPage() {
                                             isCentered={true}
                                         />
                                         <p className="text-center text-xs md:text-sm text-zinc-500 mt-4 font-medium">
-                                            Antigravity can make mistakes. Check important info.
+                                            Spirit can make mistakes. Check important info.
                                         </p>
                                     </div>
 
@@ -173,11 +186,11 @@ export default function DashboardPage() {
                                             className={cn("flex gap-4 w-full", msg.role === 'user' ? "justify-end" : "justify-start")}
                                         >
                                             {msg.role === 'ai' && (
-                                                <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center shrink-0 mt-1 bg-black text-white">
+                                                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center shrink-0 mt-1 bg-black text-white overflow-hidden">
                                                     {isThinking ? (
-                                                        <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+                                                        <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
                                                     ) : (
-                                                        <BrainCircuit className="w-5 h-5" />
+                                                        <OrbitLogo className="w-7 h-7" />
                                                     )}
                                                 </div>
                                             )}
@@ -216,13 +229,25 @@ export default function DashboardPage() {
                         className="fixed left-0 md:left-[260px] right-0 bottom-0 bg-gradient-to-t from-[#09090b] via-[#09090b] to-transparent pb-8 pt-10 z-[60] flex justify-center pointer-events-none"
                     >
                         <div className="w-full px-4 max-w-3xl pointer-events-auto">
+                            {/* Stop Button - appears during loading */}
+                            {loading && (
+                                <div className="flex justify-center mb-3">
+                                    <button
+                                        onClick={stopGeneration}
+                                        className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-white/10 rounded-full text-sm text-zinc-300 hover:text-white transition-all"
+                                    >
+                                        <Square className="w-3 h-3 fill-current" />
+                                        Stop generating
+                                    </button>
+                                </div>
+                            )}
                             <CommandInput
                                 onSend={handleSend}
                                 loading={loading}
                                 isCentered={false}
                             />
                             <p className="text-center text-[11px] text-zinc-500 mt-3">
-                                Antigravity can make mistakes. Check important info.
+                                Spirit can make mistakes. Check important info.
                             </p>
                         </div>
                     </motion.div>

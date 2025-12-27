@@ -10,7 +10,7 @@ load_dotenv()
 from app.services.chat import ChatService
 from app.services.ingestion import IngestionService
 
-app = FastAPI(title="Antigravity AI Brain")
+app = FastAPI(title="Spirit AI Brain")
 chat_service = ChatService()
 ingestion_service = IngestionService()
 
@@ -21,7 +21,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/")
 async def root():
-    return {"status": "online", "message": "Antigravity Brain is active"}
+    return {"status": "online", "message": "Spirit Brain is active"}
 
 @app.post("/chat")
 async def chat(request: ChatRequest):

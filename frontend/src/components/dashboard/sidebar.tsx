@@ -41,9 +41,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 
+import { OrbitLogo } from "@/components/ui/orbit-logo";
+
 // ... existing apps array ...
 const apps = [
-    { href: "/dashboard", label: "Orbit", icon: BrainCircuit },
+    { href: "/dashboard", label: "Spirit", icon: BrainCircuit },
     { href: "/dashboard/exams", label: "Exam Hall", icon: GraduationCap },
     { href: "/dashboard/sandbox", label: "Sandbox", icon: Code2 },
     { href: "/dashboard/forum", label: "Community", icon: MessageSquare },
@@ -89,11 +91,11 @@ export function Sidebar() {
             >
 
                 {/* Header: Logo & Collapse */}
-                <div className={cn("flex items-center p-3 mb-2", isCollapsed ? "justify-center" : "justify-between")}>
+                <div className={cn("flex items-center p-3", isCollapsed ? "justify-center" : "justify-between")}>
                     {!isCollapsed && (
                         <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#2f2f2f] transition-colors cursor-pointer group">
-                            <div className="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center shrink-0">
-                                <BrainCircuit className="w-4 h-4" />
+                            <div className="w-12 h-12 flex items-center justify-center shrink-0">
+                                <OrbitLogo />
                             </div>
                             <span className="font-medium text-sm text-[#ececec]">Orbit</span>
                         </div>
@@ -111,7 +113,7 @@ export function Sidebar() {
                 </div>
 
                 {/* Top Actions: New Chat & Search */}
-                <div className="px-3 space-y-1 mb-6">
+                <div className="px-3 space-y-1 mb-3">
                     <button
                         onClick={createNewSession}
                         className={cn(

@@ -17,6 +17,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Orbit",
   description: "The future of learning.",
+  icons: {
+    icon: "/orbit-logo.png",
+    shortcut: "/orbit-logo.png",
+    apple: "/orbit-logo.png",
+  },
 };
 
 export default function RootLayout({

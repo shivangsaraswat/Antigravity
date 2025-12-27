@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const features = {
-    basic: ["Access to Antigravity AI (Limited)", "Basic Sandbox usage", "Community access", "1 Exam simulation/week"],
-    pro: ["Unlimited Antigravity AI", "Advanced Sandbox (Unlimited)", "Priority Support", "Unlimited Exam simulations", "Personalized Roadmap", "Cheat Detection API"],
+    basic: ["Access to Spirit AI (Limited)", "Basic Sandbox usage", "Community access", "1 Exam simulation/week"],
+    pro: ["Unlimited Spirit AI", "Advanced Sandbox (Unlimited)", "Priority Support", "Unlimited Exam simulations", "Personalized Roadmap", "Cheat Detection API"],
     team: ["Everything in Pro", "Team Dashboard", "Instructor controls", "API Access", "Custom Integrations"],
 };
 

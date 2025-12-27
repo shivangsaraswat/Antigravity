@@ -6,7 +6,7 @@ import { Play, Loader2, Terminal, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function SandboxPage() {
-    const [code, setCode] = useState("// Write your Go code here\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, Antigravity!\")\n}");
+    const [code, setCode] = useState("// Write your Go code here\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, Spirit!\")\n}");
     const [output, setOutput] = useState("");
     const [isRunning, setIsRunning] = useState(false);
     const [language, setLanguage] = useState("go");
@@ -43,7 +43,7 @@ export default function SandboxPage() {
             <div className="flex items-center justify-between bg-black/40 p-4 rounded-xl border border-white/10 backdrop-blur-md">
                 <div className="flex items-center gap-4">
                     <h1 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Terminal className="text-purple-400" /> Antigravity Sandbox
+                        <Terminal className="text-purple-400" /> Orbit Sandbox
                     </h1>
                     <select
                         value={language}

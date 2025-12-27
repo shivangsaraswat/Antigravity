@@ -96,7 +96,7 @@ class ChatService:
         greetings = ["hi", "hello", "hey", "who are you", "what is your name"]
         if query.lower().strip().rstrip("?") in greetings:
             return {
-                "answer": "Hello! I am **Antigravity**, your academic mentor. I'm here to support your learning journey, help you understand complex topics, and prepare for your exams. What’s on your mind today?",
+                "answer": "Hello and Welcome. My name is Spirit, and I'm thrilled to be your academic mentor. I'm here to support and guide you throughout your learning journey, providing you with helpful insights, explanations, and resources to help you succeed.\n\nPlease feel free to ask me any questions, share your concerns, or discuss topics that interest you. I'm all ears and ready to help. What's on your mind today?",
                 "sources": []
             }
 
@@ -124,12 +124,12 @@ class ChatService:
             history_str = ""
             if history:
                 for h in history[-5:]:
-                    role = "STUDENT" if h.get('role') == 'user' else "ANTIGRAVITY"
+                    role = "STUDENT" if h.get('role') == 'user' else "SPIRIT"
                     history_str += f"{role}: {h.get('content')}\n"
 
             # 6. Improved Prompt
             prompt = f"""
-            You are Antigravity, a warm, supportive, and highly knowledgeable academic mentor. You are not just an AI answering questions; you are a partner in the student's learning journey.
+            You are Spirit, a warm, supportive, and highly knowledgeable academic mentor. You are not just an AI answering questions; you are a partner in the student's learning journey.
 
             CORE PERSONA:
             - **Human & Natural**: Speak like a helpful professor or a brilliant senior student. Avoid robotic phrases.
@@ -166,7 +166,7 @@ class ChatService:
         # 1. Greeting Check
         greetings = ["hi", "hello", "hey", "who are you", "what is your name"]
         if query.lower().strip().rstrip("?") in greetings:
-            yield "Hello! I am **Antigravity**, your academic mentor. I'm here to support your learning journey, help you understand complex topics, and prepare for your exams. What’s on your mind today?"
+            yield "Hello and Welcome. My name is **Spirit**, and I'm thrilled to be your academic mentor. I'm here to support and guide you throughout your learning journey, providing you with helpful insights, explanations, and resources to help you succeed.\n\nPlease feel free to ask me any questions, share your concerns, or discuss topics that interest you. I'm all ears and ready to help. What's on your mind today?"
             return
 
         try:
@@ -193,12 +193,12 @@ class ChatService:
             history_str = ""
             if history:
                 for h in history[-5:]:
-                    role = "STUDENT" if h.get('role') == 'user' else "ANTIGRAVITY"
+                    role = "STUDENT" if h.get('role') == 'user' else "SPIRIT"
                     history_str += f"{role}: {h.get('content')}\n"
 
             # 6. Improved STREAMING Prompt
             prompt = f"""
-            You are Antigravity, a warm, supportive, and highly knowledgeable academic mentor. You are not just an AI answering questions; you are a partner in the student's learning journey.
+            You are Spirit, a warm, supportive, and highly knowledgeable academic mentor. You are not just an AI answering questions; you are a partner in the student's learning journey.
 
             CORE PERSONA:
             - **Human & Natural**: Speak like a helpful professor or a brilliant senior student. Avoid robotic phrases like "As an AI" or "Based on the context provided".

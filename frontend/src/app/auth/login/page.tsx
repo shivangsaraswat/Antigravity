@@ -60,7 +60,7 @@ export default function LoginPage() {
                         <BrainCircuit className="w-6 h-6 text-black" />
                     </div>
                     <h2 className="text-3xl font-medium tracking-tight">Welcome back</h2>
-                    <p className="text-zinc-400 mt-2">Sign in to your Antigravity account</p>
+                    <p className="text-zinc-400 mt-2">Sign in to your Orbit account</p>
                 </div>
 
                 {/* Form */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 // Types
@@ -28,6 +28,7 @@ interface ChatContextType {
     selectSession: (sessionId: string) => void;
     sendMessage: (content: string) => Promise<void>;
     deleteSession: (sessionId: string) => void;
+    stopGeneration: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -36,6 +37,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     const [sessions, setSessions] = useState<ChatSession[]>([]);
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+
+    // Abort Controller for stopping generation
+    const abortControllerRef = useRef<AbortController | null>(null);
+    const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     // Initial Load - Fetch from Backend
     useEffect(() => {
@@ -122,6 +127,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const stopGeneration = () => {
+        // Abort the fetch request
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+            abortControllerRef.current = null;
+        }
+        // Clear the typing interval
+        if (typingIntervalRef.current) {
+            clearInterval(typingIntervalRef.current);
+            typingIntervalRef.current = null;
+        }
+        setLoading(false);
+    };
+
     const sendMessage = async (content: string) => {
         const token = localStorage.getItem("ag_token");
         if (!token) {
@@ -171,6 +190,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         }
 
         setLoading(true);
+
+        // Create new AbortController for this request
+        abortControllerRef.current = new AbortController();
 
         try {
             // Create placeholder AI message
@@ -233,6 +255,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                     message: content,
                     history: history
                 }),
+                signal: abortControllerRef.current?.signal, // Connect abort signal
             });
 
             if (!res.ok) throw new Error(res.statusText);
@@ -286,8 +309,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 } else if (isStreamDone) {
                     // Buffer is empty AND network is done -> stop typing
                     clearInterval(typingInterval);
+                    typingIntervalRef.current = null;
+                    setLoading(false); // Only stop loading when typing is complete
                 }
             }, TYPING_SPEED_MS);
+
+            // Store ref for potential cancellation
+            typingIntervalRef.current = typingInterval;
 
             // 3. Network Reader Loop
             while (true) {
@@ -302,6 +330,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             }
 
         } catch (e: any) {
+            // Check if this was an intentional abort (user clicked Stop)
+            if (e.name === 'AbortError' || e.message?.includes('aborted')) {
+                // Silently ignore - user intentionally stopped generation
+                return;
+            }
+
             const errorMsg: Message = {
                 id: uuidv4(),
                 role: 'ai',
@@ -315,7 +349,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 return s;
             }));
         } finally {
-            setLoading(false);
+            // Note: setLoading(false) is now called in the typing interval when complete
+            // This ensures stop button stays visible while typing animation continues
+            abortControllerRef.current = null;
         }
     };
 
@@ -328,7 +364,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             createNewSession,
             selectSession,
             sendMessage,
-            deleteSession
+            deleteSession,
+            stopGeneration
         }}>
             {children}
         </ChatContext.Provider>
